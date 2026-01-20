@@ -83,7 +83,7 @@ resource "hcloud_server" "node1" {
 output "private_ip" {
   value = (
     length(hcloud_server.node1.network) > 0
-    ? hcloud_server.node1.network[0].ip
+    ? tolist(hcloud_server.node1.network)[0].ip
     : hcloud_server.node1.ipv4_address
   )
 }
