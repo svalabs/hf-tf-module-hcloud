@@ -32,7 +32,7 @@ variable "poll_function" {
 }
 variable "protocol" {
   type    = string
-  default = ""
+  default = "ssh"
 }
 
 
