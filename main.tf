@@ -30,6 +30,10 @@ variable "poll_function" {
   default     = "exponential"
   description = "Configures the type of function to be used during the polling. Valid values are constant and exponential"
 }
+variable "protocol" {
+  type    = string
+  default = ""
+}
 
 
 locals {
@@ -54,9 +58,11 @@ provider "hcloud" {
   poll_function = var.poll_function
 }
 
-# Create a new SSH key
+# Create an SSH key only when protocol is "ssh"
 resource "hcloud_ssh_key" "key" {
-  name = "${var.name}-key"
+  count = var.protocol == "ssh" ? 1 : 0
+
+  name       = "${var.name}-key"
   public_key = var.public_key
 }
 
@@ -66,7 +72,7 @@ resource "hcloud_server" "node1" {
   image = var.image
   location = var.location
   server_type = var.server_type
-  ssh_keys = ["${var.name}-key"]
+  ssh_keys = var.protocol == "ssh" ? [hcloud_ssh_key.key[0].id] : []
   user_data = var.cloud-config
 
   labels = local.labels_map
